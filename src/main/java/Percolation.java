@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 /******************************************************************************
  *  Name:    Kevin Wayne
  *  Login:   wayne
@@ -15,28 +16,34 @@
  ******************************************************************************/
 public class Percolation {
   
-   
+   private int count = 0;
+    private int[][] grid;
    public Percolation(int n)  {
-   // TODO: create n-by-n grid, with all sites blocked
+       int[][] grid = new int[n][n];
+       //0 = blocked 1 = unblocked 2 = filled
+       //1-->n instead of 0-->n-1
    }
 
    public void open(int row, int col) {
-    // TODO: open site (row, col) if it is not open already
+       count++;
+       grid[row-1][col-1] = 1;
+       //union all adjacent sites
    }
    public boolean isOpen(int row, int col) {
-     // TODO: is site (row, col) open?
-     return false;
+
+     return grid[row-1][col-1] == 1;
    }
    public boolean isFull(int row, int col) {
-     // TODO: is site (row, col) full?
-     return false;
+
+       return grid[row-1][col-1] == 2;
    }
    public int numberOfOpenSites() {
-     // TODO: number of open sites
-     return 0;
+
+     return count;
    }
    
    public boolean percolates() {
+
      // TODO: does the system percolate?
      return false;
    }

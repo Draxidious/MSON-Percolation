@@ -31,6 +31,11 @@ public class PercolationTest {
     grid10.open(1, 1);
     assertTrue(grid10.isOpen(1, 1));
   }
+  @Test(expected = IllegalArgumentException.class)
+  public void testOpenIllegal() {
+    grid10.open(0, 0);
+    assertTrue(grid10.isOpen(1, 1));
+  }
 
   @Test
   public void testOpenAdjacentClosed() {

@@ -17,35 +17,66 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
   
    private int count = 0;
-    private int[][] grid;
+    private boolean[][] grid;
+    private final int[] DX = {1,0,0,-1};
+    private final int[] DY = {0,1,-1,0};
+    private int n;
+    private WeightedQuickUnionUF percolation;
+    /*
+     c = num of columns
+     to store a pair (x,y)or(row,col)--> cx+y = val
+     to get the value --> (val/c, val%c)
+     */
    public Percolation(int n)  {
-       int[][] grid = new int[n][n];
-       //0 = blocked 1 = unblocked 2 = filled
-       //1-->n instead of 0-->n-1
+        grid = new boolean[n][n];
+        this.n = n;
+       percolation = new WeightedQuickUnionUF(n*n+2);
+
+       //true = open
+       //false = blocked
    }
 
    public void open(int row, int col) {
        count++;
-       grid[row-1][col-1] = 1;
+       row--;
+       col--;
+       if(!inbounds(row,col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
+       //to make it work with grid
+       grid[row][col] = true;
+       for(int i = 0; i<DX.length;i++)
+       {
+           int x = DX[i]+row;
+           int y = DY[i]+col;
+           if(!inbounds(x,y)) continue;
+           if(isOpen(x+1,y+1))//isOpen compensates for the range so they must be incremented
+           {
+               percolation.union(row*grid.length+col,x*n+y);
+           }
+       }
        //union all adjacent sites
+       //KEEP IN MIND THEY ARE UNIONED WITHIN THE CONTEXT OF THE ARRAY
+       //THEY ARE NOT UNIONED WITHIN THE CONTEXT OF THE INPUT SPECs
    }
    public boolean isOpen(int row, int col) {
 
-     return grid[row-1][col-1] == 1;
+     return grid[row-1][col-1];
    }
    public boolean isFull(int row, int col) {
-
-       return grid[row-1][col-1] == 2;
+       row--;col--;
+       return percolation.connected(0,row*n+col);
    }
    public int numberOfOpenSites() {
-
      return count;
    }
    
    public boolean percolates() {
-
-     // TODO: does the system percolate?
-     return false;
+     return percolation.connected(0,n*n);//Not adding one here because union is in context of array
+   }
+   public boolean inbounds(int x, int y)
+   {
+       return!(x<0||x>=grid[0].length||y<0||y>=grid.length);
+       //keep in mind the inbound method works within the context of the array
+       //NOT within the input specifications of the problem
    }
 
    public static void main(String[] args) {

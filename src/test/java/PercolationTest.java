@@ -128,4 +128,5 @@ public class PercolationTest {
     assertFalse("Bottom left site is not connected to the top so should not be full",
                   input10.isFull(10, 1));
   }
+
 }

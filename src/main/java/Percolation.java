@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+
 /******************************************************************************
  *  Name:    Kevin Wayne
  *  Login:   wayne
@@ -7,7 +8,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
  *  Partner Name:    N/A
  *  Partner Login:   N/A
  *  Partner Precept: N/A
- * 
+ *
  *  Compilation:  javac-algs4 Percolation.java
  *  Execution:    java-algs4 Percolation
  *  Dependencies: StdIn.java StdRandom.java WeightedQuickUnionUF.java
@@ -15,71 +16,81 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
  *  Description:  Modeling Percolation like a boss. woot. woot.
  ******************************************************************************/
 public class Percolation {
-  
-   private int count = 0;
+
+    private int count = 0;
     private boolean[][] grid;
-    private final int[] DX = {1,0,0,-1};
-    private final int[] DY = {0,1,-1,0};
+    private final int[] DX = {1, 0, 0, -1};
+    private final int[] DY = {0, 1, -1, 0};
     private int n;
     private WeightedQuickUnionUF percolation;
+
     /*
      c = num of columns
      to store a pair (x,y)or(row,col)--> cx+y = val
      to get the value --> (val/c, val%c)
      */
-   public Percolation(int n)  {
+    public Percolation(int n) {
         grid = new boolean[n][n];
+        percolation = new WeightedQuickUnionUF(n * n + 2);
         this.n = n;
-       percolation = new WeightedQuickUnionUF(n*n+2);
+        for (int i = 1; i <= n; i++) {
+            percolation.union(0, i);
+        }
+        for (int i = n; i <= n * n - n; i++) {
+            percolation.union(n * n + 1, i);
+        }
 
-       //true = open
-       //false = blocked
-   }
+        // top virtual site is at 0, bottom n-1
+        // union bottom from n to n*n
+        // true = open
+        // false = blocked
+    }
 
-   public void open(int row, int col) {
-       count++;
-       row--;
-       col--;
-       if(!inbounds(row,col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
-       //to make it work with grid
-       grid[row][col] = true;
-       for(int i = 0; i<DX.length;i++)
-       {
-           int x = DX[i]+row;
-           int y = DY[i]+col;
-           if(!inbounds(x,y)) continue;
-           if(isOpen(x+1,y+1))//isOpen compensates for the range so they must be incremented
-           {
-               percolation.union(row*grid.length+col,x*n+y);
-           }
-       }
-       //union all adjacent sites
-       //KEEP IN MIND THEY ARE UNIONED WITHIN THE CONTEXT OF THE ARRAY
-       //THEY ARE NOT UNIONED WITHIN THE CONTEXT OF THE INPUT SPECs
-   }
-   public boolean isOpen(int row, int col) {
+    public void open(int row, int col) {
+        count++;
+        row--;
+        col--;
+        if (!inbounds(row, col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
+        // to make it work with grid
+        grid[row][col] = true;
+        for (int i = 0; i < DX.length; i++) {
+            int x = DX[i] + row;
+            int y = DY[i] + col;
+            if (!inbounds(x, y)) continue;
+            if (isOpen(x + 1, y + 1)) {  // isOpen compensates for the range so they must be incremented
+                percolation.union(row+1 * grid.length + col+1, x * n + y);
+            }
 
-     return grid[row-1][col-1];
-   }
-   public boolean isFull(int row, int col) {
-       row--;col--;
-       return percolation.connected(0,row*n+col);
-   }
-   public int numberOfOpenSites() {
-     return count;
-   }
-   
-   public boolean percolates() {
-     return percolation.connected(0,n*n);//Not adding one here because union is in context of array
-   }
-   public boolean inbounds(int x, int y)
-   {
-       return!(x<0||x>=grid[0].length||y<0||y>=grid.length);
-       //keep in mind the inbound method works within the context of the array
-       //NOT within the input specifications of the problem
-   }
+        }
+        // union all adjacent sites
+        // KEEP IN MIND THEY ARE UNIONED WITHIN THE CONTEXT OF THE ARRAY
+        // THEY ARE NOT UNIONED WITHIN THE CONTEXT OF THE INPUT SPECs
+    }
 
-   public static void main(String[] args) {
-     // TODO: test client (optional)
-   }
+    public boolean isOpen(int row, int col) {
+
+        return grid[row - 1][col - 1];
+    }
+
+    public boolean isFull(int row, int col) {
+        return percolation.connected(0, row * n + col);
+    }
+
+    public int numberOfOpenSites() {
+        return count;
+    }
+
+    public boolean percolates() {
+        if (n == 1) return true;
+        return percolation.connected(0, n * n+1);
+    }
+
+    private boolean inbounds(int x, int y) {
+        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
+        // keep in mind the inbound method works within the context of the array
+    }
+
+    public static void main(String[] args) {
+        // TODO: test client (optional)
+    }
 }

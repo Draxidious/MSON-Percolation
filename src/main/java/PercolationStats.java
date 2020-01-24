@@ -16,6 +16,10 @@
 public class PercolationStats {
    public PercolationStats(int n, int trials) {
      // TODO: perform trials independent experiments on an n-by-n grid
+       for(int i = 0; i<trials;i++)
+       {
+
+       }
    }
    public double mean() {
      // TODO: calculate sample mean of percolation threshold

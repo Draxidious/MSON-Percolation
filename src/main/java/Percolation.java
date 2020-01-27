@@ -37,7 +37,7 @@ public class Percolation {
         this.n = n;
         for (int i = 1; i <= n; i++) {
             uF1.union(0, i);
-            uF2.union(n * n , i);
+            uF2.union(0, i);
         }
         for (int i = n; i <= n * n - n; i++) {
             uF1.union(n * n + 1, i);
@@ -50,25 +50,20 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
-        count++;
-        row--;
-        col--;
         if (!inbounds(row, col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
-        // to make it work with grid
-        grid[row][col] = true;
+        count++;
+        grid[row - 1][col - 1] = true;
         for (int i = 0; i < DX.length; i++) {
-            int x = DX[i] + row;
-            int y = DY[i] + col;
-            if (!inbounds(x, y)) continue;
-            if (isOpen(x + 1, y + 1)) {  // isOpen compensates for the range so they must be incremented
-                uF1.union(row+1 * grid.length + col+1, x * n + y);
-                uF2.union(row+1 * grid.length + col+1, x * n + y);
+            int x = DX[i] + row ;
+            int y = DY[i] + col ;
+            if (!inboundsgrid(x, y)) continue;
+            if (isOpen(x, y)) {
+                uF1.union(row * grid.length + col, x * n + y);
+                uF2.union(row * grid.length + col, x * n + y);
             }
 
         }
-        // union all adjacent sites
-        // KEEP IN MIND THEY ARE UNIONED WITHIN THE CONTEXT OF THE ARRAY
-        // THEY ARE NOT UNIONED WITHIN THE CONTEXT OF THE INPUT SPECs
+
     }
 
     public boolean isOpen(int row, int col) {
@@ -86,11 +81,16 @@ public class Percolation {
 
     public boolean percolates() {
         if (n == 1) return true;
-        return uF1.connected(0, n * n+1);
+        return uF1.connected(0, n * n + 1);
+    }
+
+    private boolean inboundsgrid(int x, int y) {
+        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
+        // keep in mind the inbound method works within the context of the array
     }
 
     private boolean inbounds(int x, int y) {
-        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
+        return !(x <= 0 || x > grid[0].length || y <= 0 || y > grid.length);
         // keep in mind the inbound method works within the context of the array
     }
 

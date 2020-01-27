@@ -22,7 +22,8 @@ public class Percolation {
     private final int[] DX = {1, 0, 0, -1};
     private final int[] DY = {0, 1, -1, 0};
     private int n;
-    private WeightedQuickUnionUF percolation;
+    private WeightedQuickUnionUF uF1;
+    private WeightedQuickUnionUF uF2;
 
     /*
      c = num of columns
@@ -31,13 +32,15 @@ public class Percolation {
      */
     public Percolation(int n) {
         grid = new boolean[n][n];
-        percolation = new WeightedQuickUnionUF(n * n + 2);
+        uF1 = new WeightedQuickUnionUF(n * n + 2);
+        uF2 = new WeightedQuickUnionUF(n * n + 1);
         this.n = n;
         for (int i = 1; i <= n; i++) {
-            percolation.union(0, i);
+            uF1.union(0, i);
+            uF2.union(n * n , i);
         }
         for (int i = n; i <= n * n - n; i++) {
-            percolation.union(n * n + 1, i);
+            uF1.union(n * n + 1, i);
         }
 
         // top virtual site is at 0, bottom n-1
@@ -58,7 +61,8 @@ public class Percolation {
             int y = DY[i] + col;
             if (!inbounds(x, y)) continue;
             if (isOpen(x + 1, y + 1)) {  // isOpen compensates for the range so they must be incremented
-                percolation.union(row+1 * grid.length + col+1, x * n + y);
+                uF1.union(row+1 * grid.length + col+1, x * n + y);
+                uF2.union(row+1 * grid.length + col+1, x * n + y);
             }
 
         }
@@ -73,7 +77,7 @@ public class Percolation {
     }
 
     public boolean isFull(int row, int col) {
-        return percolation.connected(0, row * n + col);
+        return uF2.connected(0, row * n + col);
     }
 
     public int numberOfOpenSites() {
@@ -82,7 +86,7 @@ public class Percolation {
 
     public boolean percolates() {
         if (n == 1) return true;
-        return percolation.connected(0, n * n+1);
+        return uF1.connected(0, n * n+1);
     }
 
     private boolean inbounds(int x, int y) {

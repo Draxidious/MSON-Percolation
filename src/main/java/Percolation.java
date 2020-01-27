@@ -23,7 +23,7 @@ public class Percolation {
     private final int[] DY = {0, 1, -1, 0};
     private int n;
     private WeightedQuickUnionUF uF1;
-    private WeightedQuickUnionUF uF2;
+    private WeightedQuickUnionUF uF2;//without bottom
 
     /*
      c = num of columns
@@ -54,9 +54,9 @@ public class Percolation {
         count++;
         grid[row - 1][col - 1] = true;
         for (int i = 0; i < DX.length; i++) {
-            int x = DX[i] + row ;
-            int y = DY[i] + col ;
-            if (!inboundsgrid(x, y)) continue;
+            int x = DX[i] + row ;// look left and right
+            int y = DY[i] + col ;// look up and down
+            if (!inbounds(x, y)) continue;
             if (isOpen(x, y)) {
                 uF1.union(row * grid.length + col, x * n + y);
                 uF2.union(row * grid.length + col, x * n + y);
@@ -84,14 +84,13 @@ public class Percolation {
         return uF1.connected(0, n * n + 1);
     }
 
-    private boolean inboundsgrid(int x, int y) {
-        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
-        // keep in mind the inbound method works within the context of the array
-    }
-
     private boolean inbounds(int x, int y) {
         return !(x <= 0 || x > grid[0].length || y <= 0 || y > grid.length);
-        // keep in mind the inbound method works within the context of the array
+
+    }
+    private boolean inboundsgrid(int x, int y) {
+        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
+
     }
 
     public static void main(String[] args) {

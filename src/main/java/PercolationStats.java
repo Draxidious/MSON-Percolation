@@ -21,8 +21,8 @@ import java.util.Random;
 public class PercolationStats {
     private double[] thresholds;
     private int T;
-    private double mean = Integer.MIN_VALUE;
-    private double dev = Integer.MIN_VALUE;
+    private double mean;
+    private double dev;
 
     public PercolationStats(int n, int trials) {
         // TODO: perform trials independent experiments on an n-by-n grid
@@ -37,45 +37,28 @@ public class PercolationStats {
                 perc.open(newx, newy);
             }
             thresholds[i] = perc.numberOfOpenSites() / n;
-
+            mean = StdStats.mean(thresholds);
+            dev = StdStats.mean(thresholds);
         }
     }
 
     public double mean() {
         // TODO: calculate sample mean of percolation threshold
-        if (mean == Integer.MIN_VALUE) {
-            mean = StdStats.mean(thresholds);
-        }
         return mean;
     }
 
     public double stddev() {
         // TODO: calculate sample standard deviation of percolation threshold
-        if (dev == Integer.MIN_VALUE) {
-            dev = StdStats.mean(thresholds);
-        }
         return dev;
     }
 
     public double confidenceLo() {
         // TODO: return low  endpoint of 95% confidence interval
-        if (mean == Integer.MIN_VALUE) {
-            mean = StdStats.mean(thresholds);
-        }
-        if (dev == Integer.MIN_VALUE) {
-            dev = StdStats.mean(thresholds);
-        }
         return mean - ((1.96 * dev) / Math.sqrt(T));
     }
 
     public double confidenceHi() {
         // TODO: return high endpoint of 95% confidence interval
-        if (mean == Integer.MIN_VALUE) {
-            mean = StdStats.mean(thresholds);
-        }
-        if (dev == Integer.MIN_VALUE) {
-            dev = StdStats.mean(thresholds);
-        }
         return mean + ((1.96 * dev) / Math.sqrt(T));
     }
 

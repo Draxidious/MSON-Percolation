@@ -39,7 +39,7 @@ public class Percolation {
             uF1.union(0, i);
             uF2.union(0, i);
         }
-        for (int i = n; i <= n * n - n; i++) {
+        for (int i = n*n; i > n * n - n; i--) {
             uF1.union(n * n + 1, i);
         }
 
@@ -53,15 +53,29 @@ public class Percolation {
         if (!inbounds(row, col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
         count++;
         grid[row - 1][col - 1] = true;
-        for (int i = 0; i < DX.length; i++) {
-            int x = DX[i] + row ;// look left and right
-            int y = DY[i] + col ;// look up and down
-            if (!inbounds(x, y)) continue;
-            if (isOpen(x, y)) {
-                uF1.union(row * grid.length + col, x * n + y);
-                uF2.union(row * grid.length + col, x * n + y);
-            }
-
+        int newr = row +1;
+        int newc = col;
+        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
+            uF1.union(row * grid.length + col, newr* n + newc);
+            uF2.union(row * grid.length + col, newr * n + newc);
+        }
+         newr = row;
+         newc = col+1;
+        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
+            uF1.union(row * grid.length + col, newr* n + newc);
+            uF2.union(row * grid.length + col, newr * n + newc);
+        }
+         newr = row -1;
+         newc = col;
+        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
+            uF1.union(row * grid.length + col, newr* n + newc);
+            uF2.union(row * grid.length + col, newr * n + newc);
+        }
+         newr = row;
+         newc = col-1;
+        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
+            uF1.union(row * grid.length + col, newr* n + newc);
+            uF2.union(row * grid.length + col, newr * n + newc);
         }
 
     }
@@ -72,7 +86,7 @@ public class Percolation {
     }
 
     public boolean isFull(int row, int col) {
-        return uF2.connected(0, row * n + col);
+        return uF2.connected(0, (row-1) * n + (col-1)+1);
     }
 
     public int numberOfOpenSites() {

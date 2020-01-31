@@ -129,4 +129,24 @@ public class PercolationTest {
                   input10.isFull(10, 1));
   }
 
+  @Test
+  public void testBackwash2() {
+    Percolation input10 = generatePercolation("input10.txt");
+    assertFalse("Bottom second left site is not connected to the top so should not be full",
+            input10.isFull(10, 2));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidNums() {
+    grid10.open(30,80);
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidNums2() {
+    grid10.open(-30,-80);
+
+  }
+
+
 }

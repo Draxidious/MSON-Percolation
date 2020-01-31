@@ -46,14 +46,18 @@ public class PercolationStats {
         t = trials;
         for (int i = 0; i < trials; i++) {
             Percolation perc = new Percolation(n);
-            while (!perc.percolates()) {
+            boolean percs = false;
+            while (!percs) {
                 int newx = StdRandom.uniform(1, n);
                 int newy = StdRandom.uniform(1, n);
-                perc.open(newx, newy);
+                if (perc.isOpen(newx, newy)) {
+                    perc.open(newx, newy);
+                    if (perc.percolates()) percs = true;
+                }
             }
             thresholds[i] = perc.numberOfOpenSites() / n;
             mean = StdStats.mean(thresholds);
-            dev = StdStats.mean(thresholds);
+            dev = StdStats.stddev(thresholds);
         }
     }
 

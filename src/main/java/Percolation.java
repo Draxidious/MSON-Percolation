@@ -62,34 +62,36 @@ public class Percolation {
 
     public void open(int row, int col) {
         if (!inbounds(row, col)) throw new IllegalArgumentException("Index not between 1 and n");
-        count++;
-        int index = xyTo1D(row, col);
-        grid[index] = true;
+        if (!isOpen(row, col)) {
+            int index = xyTo1D(row, col);
+            count++;
+            grid[index] = true;
 
-        if (row == 1) {
-            uF1.union(index, top);
-            uF2.union(index, top);
-        }
-        if (!percolates()) {
-            if (row == n) {
-                uF1.union(index, bottom);
+            if (row == 1) {
+                uF1.union(index, top);
+                uF2.union(index, top);
             }
-        }
-        if (row < n && grid[index + n]) {
-            uF1.union(index, index + n);
-            uF2.union(index, index + n);
-        }
-        if (row > 1 && grid[index - n]) {
-            uF1.union(index, index - n);
-            uF2.union(index, index - n);
-        }
-        if (col < n && grid[index + 1]) {
-            uF1.union(index, index + 1);
-            uF2.union(index, index + 1);
-        }
-        if (col > 1 && grid[index - 1]) {
-            uF1.union(index, index - 1);
-            uF2.union(index, index - 1);
+            if (!percolates()) {
+                if (row == n) {
+                    uF1.union(index, bottom);
+                }
+            }
+            if (row < n && grid[index + n]) {
+                uF1.union(index, index + n);
+                uF2.union(index, index + n);
+            }
+            if (row > 1 && grid[index - n]) {
+                uF1.union(index, index - n);
+                uF2.union(index, index - n);
+            }
+            if (col < n && grid[index + 1]) {
+                uF1.union(index, index + 1);
+                uF2.union(index, index + 1);
+            }
+            if (col > 1 && grid[index - 1]) {
+                uF1.union(index, index - 1);
+                uF2.union(index, index - 1);
+            }
         }
     }
 

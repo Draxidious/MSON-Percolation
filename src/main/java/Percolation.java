@@ -16,12 +16,33 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
  *  Description:  Modeling Percolation like a boss. woot. woot.
  ******************************************************************************/
 public class Percolation {
+    /**
+     * The grid for checking if sites are open.
+     */
     private boolean[] grid;
+    /**
+     * The size of the grid = n*n.
+     */
     private int n;
+    /**
+     * Union Find for percolation.
+     */
     private WeightedQuickUnionUF uF1;
-    private WeightedQuickUnionUF uF2;
+    /**
+     * Union Find to deal with backwash.
+     */
+    private WeightedQuickUnionUF uF2; // without bottom
+    /**
+     * Top virtual site.
+     */
     private int top;
+    /**
+     * Bottom virtual site.
+     */
     private int bottom;
+    /**
+     * Count how many are open.
+     */
     private int count = 0;
 
     public Percolation(int n) {

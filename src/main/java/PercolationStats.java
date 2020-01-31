@@ -19,16 +19,32 @@ import java.util.Random;
  *  Description:  Modeling Percolation like a boss. woot. woot.
  ******************************************************************************/
 public class PercolationStats {
+    /**
+     * Threshold values in array for calculation.
+     */
     private double[] thresholds;
-    private int T;
+    /**
+     * Number of trials.
+     */
+    private int t;
+    /**
+     * Mean value of all thresholds.
+     */
     private double mean;
+    /**
+     * Standard deviation of threshold values.
+     */
     private double dev;
+    /**
+     * Constant value for calculation
+     */
+    private final double constant = 1.96;
 
     public PercolationStats(int n, int trials) {
         // TODO: perform trials independent experiments on an n-by-n grid
 
         thresholds = new double[trials];
-        T = trials;
+        t = trials;
         for (int i = 0; i < trials; i++) {
             Percolation perc = new Percolation(n);
             while (!perc.percolates()) {
@@ -43,23 +59,23 @@ public class PercolationStats {
     }
 
     public double mean() {
-        // TODO: calculate sample mean of percolation threshold
+        // Calculate sample mean of percolation threshold
         return mean;
     }
 
     public double stddev() {
-        // TODO: calculate sample standard deviation of percolation threshold
+        // Calculate sample standard deviation of percolation threshold.
         return dev;
     }
 
     public double confidenceLo() {
-        // TODO: return low  endpoint of 95% confidence interval
-        return mean - ((1.96 * dev) / Math.sqrt(T));
+        // Return low  endpoint of 95% confidence interval
+        return mean - ((constant * dev) / Math.sqrt(t));
     }
 
     public double confidenceHi() {
-        // TODO: return high endpoint of 95% confidence interval
-        return mean + ((1.96 * dev) / Math.sqrt(T));
+        // Return high endpoint of 95% confidence interval
+        return mean + ((constant * dev) / Math.sqrt(t));
     }
 
     public static void main(String[] args) {

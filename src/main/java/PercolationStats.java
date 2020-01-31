@@ -1,7 +1,6 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
-import java.util.Random;
 
 /******************************************************************************
  *  Name:    Kevin Wayne
@@ -36,12 +35,12 @@ public class PercolationStats {
      */
     private double dev;
     /**
-     * Constant value for calculation
+     * Constant value for calculation.
      */
     private final double constant = 1.96;
 
     public PercolationStats(int n, int trials) {
-        // TODO: perform trials independent experiments on an n-by-n grid
+        // Perform trials independent experiments on an n-by-n grid
 
         thresholds = new double[trials];
         t = trials;

@@ -16,98 +16,91 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
  *  Description:  Modeling Percolation like a boss. woot. woot.
  ******************************************************************************/
 public class Percolation {
-
-    private int count = 0;
-    private boolean[][] grid;
-    private final int[] DX = {1, 0, 0, -1};
-    private final int[] DY = {0, 1, -1, 0};
+    private boolean[] grid;
     private int n;
     private WeightedQuickUnionUF uF1;
-    private WeightedQuickUnionUF uF2;//without bottom
+    private WeightedQuickUnionUF uF2;
+    private int top;
+    private int bottom;
+    private int count = 0;
 
-    /*
-     c = num of columns
-     to store a pair (x,y)or(row,col)--> cx+y = val
-     to get the value --> (val/c, val%c)
-     */
     public Percolation(int n) {
-        grid = new boolean[n][n];
+        if (n <= 0) {
+            throw new IllegalArgumentException("N must be bigger than 0");
+        }
+        this.n = n;
         uF1 = new WeightedQuickUnionUF(n * n + 2);
         uF2 = new WeightedQuickUnionUF(n * n + 1);
-        this.n = n;
-        for (int i = 1; i <= n; i++) {
-            uF1.union(0, i);
-            uF2.union(0, i);
+        grid = new boolean[n * n + 2];   // 0 top virtual site N*N+1 bottom virtual site
+        top = 0;
+        bottom = n * n + 1;
+        for (int i = 1; i <= n * n; i++) {
+            grid[i] = false;
         }
-        for (int i = n*n; i > n * n - n; i--) {
-            uF1.union(n * n + 1, i);
-        }
-
-        // top virtual site is at 0, bottom n-1
-        // union bottom from n to n*n
-        // true = open
-        // false = blocked
     }
 
     public void open(int row, int col) {
-        if (!inbounds(row, col)) throw new IllegalArgumentException("Invalid numbers were inputed for the open method");
+        if (!inbounds(row, col)) throw new IllegalArgumentException("Index not between 1 and n");
         count++;
-        grid[row - 1][col - 1] = true;
-        int newr = row +1;
-        int newc = col;
-        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
-            uF1.union(row * grid.length + col, newr* n + newc);
-            uF2.union(row * grid.length + col, newr * n + newc);
-        }
-         newr = row;
-         newc = col+1;
-        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
-            uF1.union(row * grid.length + col, newr* n + newc);
-            uF2.union(row * grid.length + col, newr * n + newc);
-        }
-         newr = row -1;
-         newc = col;
-        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
-            uF1.union(row * grid.length + col, newr* n + newc);
-            uF2.union(row * grid.length + col, newr * n + newc);
-        }
-         newr = row;
-         newc = col-1;
-        if (inbounds(newr,newc)&&isOpen(newr,newc)) {
-            uF1.union(row * grid.length + col, newr* n + newc);
-            uF2.union(row * grid.length + col, newr * n + newc);
-        }
+        int index = xyTo1D(row, col);
+        grid[index] = true;
 
+        if (row == 1) {
+            uF1.union(index, top);
+            uF2.union(index, top);
+        }
+        if (!percolates()) {
+            if (row == n) {
+                uF1.union(index, bottom);
+            }
+        }
+        if (row < n && grid[index + n]) {
+            uF1.union(index, index + n);
+            uF2.union(index, index + n);
+        }
+        if (row > 1 && grid[index - n]) {
+            uF1.union(index, index - n);
+            uF2.union(index, index - n);
+        }
+        if (col < n && grid[index + 1]) {
+            uF1.union(index, index + 1);
+            uF2.union(index, index + 1);
+        }
+        if (col > 1 && grid[index - 1]) {
+            uF1.union(index, index - 1);
+            uF2.union(index, index - 1);
+        }
+    }
+
+    private int xyTo1D(int x, int y) {
+        if (!inbounds(x, y)) throw new IllegalArgumentException("Index not between 1 and n");
+        return y + (x - 1) * n;
+    }
+
+    private boolean inbounds(int x, int y) {
+        return (x >= 1 && x <= n && y >= 1 && y <= n);
     }
 
     public boolean isOpen(int row, int col) {
-
-        return grid[row - 1][col - 1];
+        if (!inbounds(row, col)) throw new IllegalArgumentException("Index not between 1 and n");
+        return grid[xyTo1D(row, col)];
     }
+
 
     public boolean isFull(int row, int col) {
-        return uF2.connected(0, (row-1) * n + (col-1)+1);
+        if (!inbounds(row, col)) throw new IllegalArgumentException("Index not between 1 and n");
+        return uF2.connected(top, xyTo1D(row, col));
     }
+
+    public boolean percolates() {
+        return uF1.connected(top, bottom);
+    }
+
 
     public int numberOfOpenSites() {
         return count;
     }
 
-    public boolean percolates() {
-        if (n == 1) return true;
-        return uF1.connected(0, n * n + 1);
-    }
-
-    private boolean inbounds(int x, int y) {
-        return !(x <= 0 || x > grid[0].length || y <= 0 || y > grid.length);
-
-    }
-    private boolean inboundsgrid(int x, int y) {
-        return !(x < 0 || x >= grid[0].length || y < 0 || y >= grid.length);
-
-    }
-
     public static void main(String[] args) {
-        // TODO: test client (optional)
     }
 }

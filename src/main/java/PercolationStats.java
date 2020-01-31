@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
+import java.util.Arrays;
+
 
 /******************************************************************************
  *  Name:    Kevin Wayne
@@ -25,7 +27,7 @@ public class PercolationStats {
     /**
      * Number of trials.
      */
-    private int t;
+    private double t;
     /**
      * Mean value of all thresholds.
      */
@@ -34,6 +36,14 @@ public class PercolationStats {
      * Standard deviation of threshold values.
      */
     private double dev;
+    /**
+     * Low confidence interval.
+     */
+    private double lo;
+    /**
+     * High confidence interval.
+     */
+    private double hi;
     /**
      * Constant value for calculation.
      */
@@ -44,21 +54,24 @@ public class PercolationStats {
 
         thresholds = new double[trials];
         t = trials;
+
         for (int i = 0; i < trials; i++) {
             Percolation perc = new Percolation(n);
-            boolean percs = false;
-            while (!percs) {
-                int newx = StdRandom.uniform(1, n);
-                int newy = StdRandom.uniform(1, n);
-                if (perc.isOpen(newx, newy)) {
+
+            while (!perc.percolates()) {
+                int newx = StdRandom.uniform(1, n + 1);
+                int newy = StdRandom.uniform(1, n + 1);
+                if (!perc.isOpen(newx, newy)) {
                     perc.open(newx, newy);
-                    if (perc.percolates()) percs = true;
                 }
             }
-            thresholds[i] = perc.numberOfOpenSites() / n;
-            mean = StdStats.mean(thresholds);
-            dev = StdStats.stddev(thresholds);
+            thresholds[i] = (double) perc.numberOfOpenSites() / (double) (n * n);
         }
+        mean = StdStats.mean(thresholds);
+
+        dev = StdStats.stddev(thresholds);
+        lo = mean - ((constant * dev) / Math.sqrt(t));
+        hi = mean + ((constant * dev) / Math.sqrt(t));
     }
 
     public double mean() {
@@ -73,15 +86,14 @@ public class PercolationStats {
 
     public double confidenceLo() {
         // Return low  endpoint of 95% confidence interval
-        return mean - ((constant * dev) / Math.sqrt(t));
+        return lo;
     }
 
     public double confidenceHi() {
         // Return high endpoint of 95% confidence interval
-        return mean + ((constant * dev) / Math.sqrt(t));
+        return hi;
     }
 
     public static void main(String[] args) {
-        // test client (described at http://coursera.cs.princeton.edu/algs4/assignments/percolation.html)
     }
 }

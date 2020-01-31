@@ -55,9 +55,7 @@ public class Percolation {
         grid = new boolean[n * n + 2];   // 0 top virtual site N*N+1 bottom virtual site
         top = 0;
         bottom = n * n + 1;
-        for (int i = 1; i <= n * n; i++) {
-            grid[i] = false;
-        }
+
     }
 
     public void open(int row, int col) {
@@ -118,7 +116,6 @@ public class Percolation {
     public boolean percolates() {
         return uF1.connected(top, bottom);
     }
-
 
     public int numberOfOpenSites() {
         return count;

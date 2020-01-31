@@ -50,6 +50,9 @@ public class PercolationStats {
     private final double constant = 1.96;
 
     public PercolationStats(int n, int trials) {
+        if (n <= 0 || trials <= 0) {
+            throw new IllegalArgumentException("n and t must be bigger than 0");
+        }
         // Perform trials independent experiments on an n-by-n grid
 
         thresholds = new double[trials];
